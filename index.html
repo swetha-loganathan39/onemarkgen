@@ -6,6 +6,7 @@
     <title>Question Paper Generator</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="scripts/main.js" defer></script>
     <style>
         body {
             font-family: 'Inter', sans-serif;
@@ -54,12 +55,18 @@
                     <p class="text-gray-500 dark:text-gray-400 mt-2">Create a custom test paper from your questions.</p>
                 </div>
 
-                <!-- CSV Input - Hidden by default, pre-filled -->
-                <textarea id="csv-data" class="hidden"></textarea>
+                <!-- Subject Selection -->
+                <div class="mb-6">
+                    <label for="subject-select" class="block text-lg font-semibold mb-3 text-gray-700 dark:text-gray-300">1. Select Subject</label>
+                    <select id="subject-select" class="w-full p-3 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                        <option value="Accountancy">Accountancy</option>
+                        <option value="Commerce">Commerce</option>
+                    </select>
+                </div>
 
                 <!-- Unit Selection -->
                 <div class="mb-6">
-                    <label class="block text-lg font-semibold mb-3 text-gray-700 dark:text-gray-300">1. Select Units</label>
+                    <label class="block text-lg font-semibold mb-3 text-gray-700 dark:text-gray-300">2. Select Units</label>
                     <div id="unit-selection" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
                         <!-- Unit checkboxes will be dynamically inserted here -->
                     </div>
@@ -72,11 +79,11 @@
                 <!-- Options -->
                 <div class="grid md:grid-cols-2 gap-6 mb-8">
                     <div>
-                        <label for="paper-date" class="block text-lg font-semibold mb-3 text-gray-700 dark:text-gray-300">2. Paper Date</label>
+                        <label for="paper-date" class="block text-lg font-semibold mb-3 text-gray-700 dark:text-gray-300">3. Paper Date</label>
                         <input type="date" id="paper-date" class="w-full p-3 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
                     </div>
                     <div>
-                         <label class="block text-lg font-semibold mb-3 text-gray-700 dark:text-gray-300">3. Options</label>
+                         <label class="block text-lg font-semibold mb-3 text-gray-700 dark:text-gray-300">4. Options</label>
                          <div class="flex items-center w-full p-3 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg">
                             <input id="shuffle" type="checkbox" class="h-5 w-5 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500">
                             <label for="shuffle" class="ml-3 text-gray-700 dark:text-gray-300">Shuffle Questions</label>
@@ -105,297 +112,7 @@
             </div>
             <div id="paper-content" class="max-w-4xl mx-auto bg-white rounded-lg shadow-2xl">
                 <!-- Generated paper will be injected here -->
-            </div>
-        </div>
-    </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // --- DATA ---
-            const csvData = `Unit,Question Number,Question Text,Option A,Option B,Option C,Option D,Correct Answer
-"1","1","Incomplete records are generally maintained by","A company","Government","Small sized sole trader business","Multinational enterprises","C"
-"1","2","Statement of affairs is a","Statement of income and expenditure","Statement of assets and liabilities","Summary of cash transactions","Summary of credit transactions","B"
-"1","3","Opening statement of affairs is usually prepared to find out the","Capital in the beginning of the year","Capital at the end of the year","Profit made during the year","Loss occurred during the year","A"
-"1","4","The excess of assets over liabilities is","Loss","Cash","Capital","Profit","C"
-"1","5","Which of the following items relating to bills payable is transferred to total creditors account?","Opening balance of bills payable","Closing balance of bills payable","Bills payable accepted during the year","Cash paid for bills payable","C"
-"1","6","The amount of credit sales can be computed from","Total debtors account","Total creditors account","Bills receivable account","Bills payable account","A"
-"1","7","Which one of the following statements is not true in relation to incomplete records?","It is an unscientific method of recording transactions","Records are maintained only for cash and personal accounts","It is suitable for all types of organisations","Tax authorities do not accept","C"
-"1","8","What is the amount of capital of the proprietor, if his assets are Rs. 85,000 and liabilities are Rs. 21,000?","Rs. 85,000","Rs. 1,06,000","Rs. 21,000","Rs. 64,000","D"
-"1","9","When capital in the beginning is Rs. 10,000, drawings during the year is Rs. 6,000, profit made during the year is Rs. 2,000 and the additional capital introduced is Rs. 3,000, find out the amount of capital at the end.","Rs. 9,000","Rs. 11,000","Rs. 21,000","Rs. 3,000","A"
-"1","10","Opening balance of debtors: Rs. 30,000, cash received: Rs. 1,00,000, credit sales: Rs. 90,000; closing balance of debtors is","Rs. 30,000","Rs. 1,30,000","Rs. 40,000","Rs. 20,000","D"
-"2","1","Receipts and payments account is a","Nominal A/c","Real A/c","Personal A/c","Representative personal account","B"
-"2","2","Receipts and payments account records receipts and payments of","Revenue nature only","Capital nature only","Both revenue and capital nature","None of the above","C"
-"2","3","Balance of receipts and payments account indicates the","Loss incurred during the period","Excess of income over expenditure of the period","Total cash payments during the period","Cash and bank balance as on the date","D"
-"2","4","Income and expenditure account is a","Nominal A/c","Real A/c","Personal A/c","Representative personal account","A"
-"2","5","Income and Expenditure Account is prepared to find out","Profit or loss","Cash and bank balance","Surplus or deficit","Financial position","C"
-"2","6","Which of the following should not be recorded in the income and expenditure account?","Sale of old news papers","Loss on sale of asset","Honorarium paid to the secretary","Sale proceeds of furniture","D"
-"2","7","Subscription due but not received for the current year is","An asset","A liability","An expense","An item to be ignored","A"
-"2","8","Legacy is a","Revenue expenditure","Capital expenditure","Revenue receipt","Capital receipt","D"
-"2","9","Donations received for a specific purpose is","Revenue receipt","Capital receipt","Revenue expenditure","Capital expenditure","B"
-"2","10","There are 500 members in a club each paying Rs. 100 as annual subscription. Subscription due but not received for the current year is Rs. 200; Subscription received in advance is Rs. 300. Find out the amount of subscription to be shown in the income and expenditure account.","Rs. 50,000","Rs. 50,200","Rs. 49,900","Rs. 49,800","A"
-"3","1","In the absence of a partnership deed, profits of the firm will be shared by the partners in","Equal ratio","Capital ratio","Both (a) and (b)","None of these","A"
-"3","2","In the absence of an agreement among the partners, interest on capital is","Not allowed","Allowed at bank rate","Allowed @ 5% per annum","Allowed @ 6% per annum","A"
-"3","3","As per the Indian Partnership Act, 1932, the rate of interest allowed on loans advanced by partners is","8% per annum","12% per annum","5% per annum","6% per annum","D"
-"3","4","Which of the following is shown in Profit and loss appropriation account?","Office expenses","Salary of staff","Partners' salary","Interest on bank loan","C"
-"3","5","When fixed capital method is adopted by a partnership firm, which of the following items will appear in capital account?","Additional capital introduced","Interest on capital","Interest on drawings","Share of profit","A"
-"3","6","When a partner withdraws regularly a fixed sum of money at the middle of every month, period for which interest is to be calculated on the drawings on an average is","5.5 months","6 months","12 months","6.5 months","B"
-"3","7","Which of the following is the incorrect pair?","Interest on drawings - Debited to capital account","Interest on capital - Credited to capital account","Interest on loan - Debited to capital account","Share of profit - Credited to capital account","C"
-"3","8","In the absence of an agreement, partners are entitled to","Salary","Commission","Interest on loan","Interest on capital","C"
-"3","9","Pick the odd one out","Partners share profits and losses equally","Interest on partners capital is allowed at 7% per annum","No salary or remuneration is allowed to partners","Interest on loan from partners is allowed at 6% per annum.","B"
-"3","10","Profit after interest on drawings, interest on capital and remuneration is Rs. 10,500. Geetha, a partner, is entitled to receive commission @ 5% on profits after charging such commission. Find out commission.","Rs. 50","Rs. 150","Rs. 550","Rs. 500","D"
-"4","1","Which of the following statements is true?","Goodwill is an intangible asset","Goodwill is a current asset","Goodwill is a fictitious asset","Goodwill cannot be acquired","A"
-"4","2","Super profit is the difference between","Capital employed and average profit","Assets and liabilities","Average profit and normal profit","Current year's profit and average profit","C"
-"4","3","The average rate of return of similar concerns is considered as","Average profit","Normal rate of return","Expected rate of return","None of these","B"
-"4","4","Which of the following is true?","Super profit = Total profit / number of years","Super profit = Weighted profit / number of years","Super profit = Average profit - Normal profit","Super profit = Average profit * Years of purchase","C"
-"4","5","Identify the incorrect pair","Goodwill under Average profit method - Average profit * Number of years of purchase","Goodwill under Super profit method - Super profit * Number of years of purchase","Goodwill under Annuity method - Average profit * Present value annuity factor","Goodwill under Weighted average profit method - Weighted average profit * Number of years of purchase","C"
-"4","6","When the average profit is Rs. 25,000 and the normal profit is Rs. 15,000, super profit is","Rs. 25,000","Rs. 5,000","Rs. 10,000","Rs. 15,000","C"
-"4","7","Book profit of 2017 is Rs. 35,000; non-recurring income included in the profit is Rs. 1,000 and abnormal loss charged in the year 2017 was Rs. 2,000, then the adjusted profit is","Rs. 36,000","Rs. 35,000","Rs. 38,000","Rs. 34,000","A"
-"4","8","The total capitalised value of a business is Rs. 1,00,000; assets are Rs. 1,50,000 and liabilities are Rs. 80,000. The value of goodwill as per the capitalisation method will be","Rs. 40,000","Rs. 70,000","Rs. 1,00,000","Rs. 30,000","D"
-"5","1","Revaluation A/c is a","Real A/c","Nominal A/c","Personal A/c","Impersonal A/c","B"
-"5","2","On revaluation, the increase in the value of assets leads to","Gain","Loss","Expense","None of these","A"
-"5","3","The profit or loss on revaluation of assets and liabilities is transferred to the capital account of","The old partners","The new partner","All the partners","The Sacrificing partners","A"
-"5","4","If the old profit sharing ratio is more than the new profit sharing ratio of a partner, the difference is called","Capital ratio","Sacrificing ratio","Gaining ratio","None of these","B"
-"5","5","At the time of admission, the goodwill brought by the new partner may be credited to the capital accounts of","all the partners","the old partners","the new partner","the sacrificing partners","D"
-"5","6","Which of the following statements is not true in relation to admission of a partner","Generally mutual rights of the partners change","The profits and losses of the previous years are distributed to the old partners","The firm is reconstituted under a new agreement","The existing agreement does not come to an end","D"
-"5","7","Match List I with List II and select the correct answer using the codes given below: List I: (i) Sacrificing ratio, (ii) Old profit sharing ratio, (iii) Revaluation Account, (iv) Capital Account. List II: 1. Investment fluctuation fund, 2. Accumulated profit, 3. Goodwill, 4. Unrecorded liability","(i)-1, (ii)-2, (iii)-3, (iv)-4","(i)-3, (ii)-2, (iii)-4, (iv)-1","(i)-4, (ii)-3, (iii)-2, (iv)-1","(i)-3, (ii)-1, (iii)-2, (iv)-4","B"
-"5","8","Select the odd one out","Revaluation profit","Accumulated loss","Goodwill brought by new partner","Investment fluctuation fund","C"
-"5","9","James and Kamal are sharing profits and losses in the ratio of 5:3. They admit Sunil as a partner giving him 1/5 share of profits. Find out the sacrificing ratio.","1:3","3:1","5:3","3:5","C"
-"5","10","Balaji and Kamalesh are partners sharing profits and losses in the ratio of 2:1. They admit Yogesh into partnership. The new profit sharing ratio between Balaji, Kamalesh and Yogesh is agreed to 3:1:1. Find the sacrificing ratio between Balaji and Kamalesh.","1:3","3:1","2:1","1:2","D"
-"6","1","A partner retires from the partnership firm on 30th June. He is liable for all the acts of the firm up to the","End of the current accounting period","End of the previous accounting period","Date of his retirement","Date of his final settlement","C"
-"6","2","On retirement of a partner from a partnership firm, accumulated profits and losses are distributed to the partners in the","New profit sharing ratio","Old profit sharing ratio","Gaining ratio","Sacrificing ratio","B"
-"6","3","On retirement of a partner, general reserve is transferred to the","Capital account of all the partners","Revaluation account","Capital account of the continuing partners","Memorandum revaluation account","A"
-"6","4","On revaluation, the increase in liabilities leads to","Gain","Loss","Profit","None of these","B"
-"6","5","At the time of retirement of a partner, determination of gaining ratio is required","To transfer revaluation profit or loss","To distribute accumulated profits and losses","To adjust goodwill","None of these","C"
-"6","6","If the final amount due to a retiring partner is not paid immediately, it is transferred to","Bank A/c","Retiring partner's capital A/c","Retiring partner's loan A/c","Other partners' capital A/c","C"
-"6","7","'A' was a partner in a partnership firm. He died on 31st March 2019. The final amount due to him is Rs. 25,000 which is not paid immediately. It will be transferred to","A's capital account","A's current account","A's Executor account","A's Executor loan account","D"
-"6","8","A, B and C are partners sharing profits in the ratio of 2:2:1. On retirement of B, goodwill of the firm was valued as Rs. 30,000. Find the contribution of A and C to compensate B:","Rs. 20,000 and Rs. 10,000","Rs. 8,000 and Rs. 4,000","Rs. 10,000 and Rs. 20,000","Rs. 15,000 and Rs. 15,000","B"
-"6","9","A, B and C are partners sharing profits in the ratio of 4:2:3. C retires. The new profit sharing ratio between A and B will be","4:3","3:4","2:1","1:2","C"
-"6","10","X, Y and Z were partners sharing profits and losses equally. X died on 1st April 2019. Find out the share of X in the profit of 2019 based on the profit of 2018 which showed Rs. 36,000.","Rs. 1,000","Rs. 3,000","Rs. 12,000","Rs. 36,000","B"
-"7","1","A preference share is one (i) which carries preferential right with respect to payment of dividend at fixed rate (ii) which carries preferential right with respect to repayment of capital on winding up","Only (i) is correct","Only (ii) is correct","Both (i) and (ii) are correct","Both (i) and (ii) are incorrect","C"
-"7","2","That part of share capital which can be called up only on the winding up of a company is called:","Authorised capital","Called up capital","Capital reserve","Reserve capital","D"
-"7","3","At the time of forfeiture, share capital account is debited with","Face value","Nominal value","Paid up amount","Called up amount","D"
-"7","4","After the forfeited shares are reissued, the balance in the forfeited shares account should be transferred to","General reserve account","Capital reserve account","Securities premium account","Surplus account","B"
-"7","5","The amount received over and above the par value is credited to","Securities premium account","Calls in advance account","Share capital account","Forfeited shares account","A"
-"7","6","Which of the following statement is false?","Issued capital can never be more than the authorised capital","In case of under subscription, issued capital will be less than the subscribed capital","Reserve capital can be called at the time of winding up","Paid up capital is part of called up capital","B"
-"7","7","When shares are issued for purchase of assets, the amount should be credited to","Vendor's A/c","Sundry assets A/c","Share capital A/c","Bank A/c","C"
-"7","8","Match the pair and identify the correct option: (i) Amount prepaid for calls, (ii) Subscription above the offered shares, (iii) Subscription below the offered shares, (iv) Amount unpaid on calls. Options: (1) Under subscription, (2) Over subscription, (3) Calls in arrear, (4) Calls in advance","(i)-1, (ii)-2, (iii)-3, (iv)-4","(i)-4, (ii)-3, (iii)-2, (iv)-1","(i)-4, (ii)-2, (iii)-1, (iv)-3","(i)-2, (ii)-4, (iii)-1, (iv)-3","C"
-"7","9","If a share of Rs. 10 on which Rs. 8 has been paid up is forfeited. Minimum reissue price is","Rs. 10 per share","Rs. 8 per share","Rs. 5 per share","Rs. 2 per share","D"
-"7","10","Supreme Ltd. forfeited 100 shares of Rs. 10 each for non-payment of final call of Rs. 2 per share. All these shares were re-issued at Rs. 9 per share. What amount will be transferred to capital reserve account?","Rs. 700","Rs. 800","Rs. 900","Rs. 1,000","A"
-"8","1","Which of the following statements is not true?","Notes and schedules also form part of financial statements.","The tools of financial statement analysis include common-size statement","Trend analysis refers to the study of movement of figures for one year","The common-size statements show the relationship of various items with some common base, expressed as percentage of the common base","C"
-"8","2","Balance sheet provides information about the financial position of a business concern","Over a period of time","As on a particular date","For a period of time","For the accounting period","B"
-"8","3","Which of the following tools of financial statement analysis is suitable when data relating to several years are to be analysed?","Cash flow statement","Common size statement","Comparative statement","Trend analysis","D"
-"8","4","The financial statements do not exhibit","Non-monetary data","Past data","Short term data","Long term data","A"
-"8","5","Which of the following is not a tool of financial statement analysis?","Trend analysis","Common size statement","Comparative statement","Standard costing","D"
-"8","6","The term 'fund' refers to","Current liabilities","Working capital","Fixed assets","Non-current assets","B"
-"8","7","Which of the following statements is not true?","All the limitations of financial statements are applicable to financial statement analysis also.","Financial statement analysis is only the means and not an end.","Expert knowledge is not required in analysing the financial statements.","Interpretation of the analysed data involves personal judgement.","C"
-"8","8","A limited company's sales has increased from Rs. 1,25,000 to Rs. 1,50,000. How does this appear in comparative income statement?","+ 20%","+ 120%","- 120%","- 20%","A"
-"8","9","In a common-size balance sheet, if the percentage of non-current assets is 75, what would be the percentage of current assets?","175","125","25","100","C"
-"8","10","Expenses for a business for the first year were Rs. 80,000. In the second year, it was increased to Rs. 88,000. What is the trend percentage in the second year?","10%","110%","90%","11%","B"
-"9","1","The mathematical expression that provides a measure of the relationship between two figures is called","Conclusion","Ratio","Model","Decision","B"
-"9","2","Current ratio indicates","Ability to meet short term obligations","Efficiency of management","Profitability","Long term solvency","A"
-"9","3","Current assets excluding inventory and prepaid expenses is called","Reserves","Tangible assets","Funds","Quick assets","D"
-"9","4","Debt equity ratio is a measure of","Short term solvency","Long term solvency","Profitability","Efficiency","B"
-"9","5","Match List I with List II and select the correct answer using the codes given below: List I: (i) Current ratio, (ii) Net profit ratio, (iii) Debt-equity ratio, (iv) Inventory turnover ratio. List II: 1. Liquidity, 2. Efficiency, 3. Long term solvency, 4. Profitability","(i)-4, (ii)-1, (iii)-3, (iv)-2","(i)-2, (ii)-3, (iii)-4, (iv)-1","(i)-4, (ii)-3, (iii)-2, (iv)-1","(i)-1, (ii)-4, (iii)-3, (iv)-2","A"
-"9","6","To test the liquidity of a concern, which of the following ratios are useful? (i) Quick ratio (ii) Net profit ratio (iii) Debt-equity ratio (iv) Current ratio","(i) and (ii)","(i) and (iv)","(ii) and (iii)","(ii) and (iv)","B"
-"9","7","Proportion of share holders' funds to total assets is called","Proprietary ratio","Capital gearing ratio","Debt equity ratio","Current ratio","A"
-"9","8","Which one of the following is not correctly matched?","Liquid ratio - Proportion","Gross profit ratio - Percentage","Fixed assets turnover ratio - Percentage","Debt-equity ratio - Proportion","C"
-"9","9","Current liabilities Rs. 40,000; Current assets Rs. 1,00,000; Inventory Rs. 20,000. Quick ratio is","1:1","2.5:1","2:1","1:2","C"
-"9","10","Cost of revenue from operations Rs. 3,00,000; Inventory in the beginning of the year Rs. 60,000; Inventory at the close of the year Rs. 40,000. Inventory turnover ratio is","2 times","3 times","6 times","8 times","C"
-"10","1","Accounting report prepared according to the requirements of the user is","Routine accounting report","Special purpose report","Trial balance","Balance sheet","B"
-"10","2","Function key F11 is used for","Company Features","Accounting vouchers","Company Configuration","None of these","A"
-"10","3","Which submenu displays groups, ledgers and voucher types in Tally?","Inventory vouchers","Accounting vouchers","Company Info","Account Info","D"
-"10","4","What are the predefined Ledger(s) in Tally? (i) Cash (ii) Profit & Loss A/c (iii) Capital A/c","Only (i)","Only (ii)","Both (i) and (ii)","Both (ii) and (iii)","C"
-"10","5","Contra voucher is used for","Master entry","Withdrawal of cash from bank for office use","Reports","Credit purchase of assets","B"
-"10","6","Which is not the default group in Tally?","Suspense account","Outstanding expense","Sales account","Investments","B"
-"10","7","Salary account comes under which of the following head?","Direct Incomes","Direct Expenses","Indirect Incomes","Indirect Expenses","D"
-"10","8","Rs. 25,000 withdrawn from bank for office use. In which voucher type, this transaction will be recorded","Contra Voucher","Receipt Voucher","Payment Voucher","Sales Voucher","A"
-"10","9","In which voucher type credit purchase of furniture is recorded in Tally","Receipt voucher","Journal voucher","Purchase voucher","Payment voucher","B"
-"10","10","Which of the following options is used to view Trial Balance from Gateway of Tally?","Gateway of Tally -> Reports -> Trial Balance","Gateway of Tally -> Trial Balance","Gateway of Tally -> Reports -> Display -> Trial Balance","None of these","C"
-`;
-            
-            // --- DOM ELEMENTS ---
-            const csvDataEl = document.getElementById('csv-data');
-            const unitSelectionEl = document.getElementById('unit-selection');
-            const selectAllUnitsEl = document.getElementById('select-all-units');
-            const paperDateEl = document.getElementById('paper-date');
-            const shuffleEl = document.getElementById('shuffle');
-            const totalMarksEl = document.getElementById('total-marks');
-            const generateBtn = document.getElementById('generate-btn');
-            const controlsView = document.getElementById('controls-view');
-            const paperView = document.getElementById('paper-view');
-            const backBtn = document.getElementById('back-btn');
-            const printBtn = document.getElementById('print-btn');
-            const paperContentEl = document.getElementById('paper-content');
-
-            let allQuestions = [];
-
-            // --- FUNCTIONS ---
-
-            /**
-             * Parses CSV data into an array of objects.
-             * @param {string} csv - The CSV data as a string.
-             * @returns {Array<Object>}
-             */
-            function parseCSV(csv) {
-                const lines = csv.trim().split('\n');
-                const headers = lines[0].split(',').map(h => h.trim().replace(/"/g, ''));
-                const data = [];
-                for (let i = 1; i < lines.length; i++) {
-                    const values = lines[i].match(/(".*?"|[^",]+)(?=\s*,|\s*$)/g) || [];
-                    if (values.length === headers.length) {
-                        const obj = {};
-                        for (let j = 0; j < headers.length; j++) {
-                            obj[headers[j]] = values[j].replace(/"/g, '').trim();
-                        }
-                        data.push(obj);
-                    }
-                }
-                return data;
-            }
-
-            /**
-             * Populates the unit selection checkboxes.
-             */
-            function populateUnits() {
-                const units = [...new Set(allQuestions.map(q => q.Unit))].sort((a, b) => a - b);
-                unitSelectionEl.innerHTML = '';
-                units.forEach(unit => {
-                    const div = document.createElement('div');
-                    div.className = 'flex items-center';
-                    const checkbox = document.createElement('input');
-                    checkbox.type = 'checkbox';
-                    checkbox.id = `unit-${unit}`;
-                    checkbox.value = unit;
-                    checkbox.className = 'unit-checkbox h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500';
-                    const label = document.createElement('label');
-                    label.htmlFor = `unit-${unit}`;
-                    label.textContent = `Unit ${unit}`;
-                    label.className = 'ml-2 text-sm text-gray-700 dark:text-gray-300';
-                    div.appendChild(checkbox);
-                    div.appendChild(label);
-                    unitSelectionEl.appendChild(div);
-                });
-                
-                // Add event listener to checkboxes to update marks
-                document.querySelectorAll('.unit-checkbox').forEach(cb => {
-                    cb.addEventListener('change', updateTotalMarks);
-                });
-            }
-            
-            /**
-             * Updates the total marks display based on selected units.
-             */
-            function updateTotalMarks() {
-                const selectedUnits = getSelectedUnits();
-                const questionCount = allQuestions.filter(q => selectedUnits.includes(q.Unit)).length;
-                totalMarksEl.textContent = questionCount;
-                generateBtn.disabled = questionCount === 0;
-            }
-
-            /**
-             * Gets the currently selected units from the checkboxes.
-             * @returns {Array<string>}
-             */
-            function getSelectedUnits() {
-                 return Array.from(document.querySelectorAll('.unit-checkbox:checked')).map(cb => cb.value);
-            }
-
-            /**
-             * Shuffles an array in place.
-             * @param {Array} array - The array to shuffle.
-             */
-            function shuffleArray(array) {
-                for (let i = array.length - 1; i > 0; i--) {
-                    const j = Math.floor(Math.random() * (i + 1));
-                    [array[i], array[j]] = [array[j], array[i]];
-                }
-            }
-
-            /**
-             * Generates the question paper HTML.
-             */
-            function generatePaper() {
-                const selectedUnits = getSelectedUnits();
-                if (selectedUnits.length === 0) {
-                    alert('Please select at least one unit.');
-                    return;
-                }
-
-                let questionsToUse = allQuestions.filter(q => selectedUnits.includes(q.Unit));
-                
-                if (shuffleEl.checked) {
-                    shuffleArray(questionsToUse);
-                }
-
-                const paperDate = new Date(paperDateEl.value);
-                const formattedDate = paperDate.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' });
-                const totalMarks = questionsToUse.length;
-
-                let paperHTML = `
-                    <div class="text-center p-4">
-                        <h2 class="text-2xl font-bold">Ashram Matriculation Higher Secondary School</h2>
-                        <h3 class="text-xl font-semibold mt-1">One Mark test</h3>
-                    </div>
-                    <div class="flex justify-between p-4 font-semibold">
-                        <span>Date: ${formattedDate}</span>
-                        <span>Total mark: ${totalMarks}</span>
-                    </div>
-                    <hr class="border-black my-4">
-                    <div class="p-4">
-                        <ol class="list-decimal list-inside space-y-6">
-                `;
-                            
-                questionsToUse.forEach((q, index) => {
-                    paperHTML += `
-                        <li class="break-words">
-                            <span class="font-semibold">${q['Question Text']}</span>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-2 text-sm">
-                                <span>(a) ${q['Option A']}</span>
-                                <span>(b) ${q['Option B']}</span>
-                                <span>(c) ${q['Option C']}</span>
-                                <span>(d) ${q['Option D']}</span>
-                            </div>
-                        </li>
-                    `;
-                });
-
-                paperHTML += `
-                        </ol>
-                    </div>
-                `;
-
-                paperContentEl.innerHTML = paperHTML;
-                controlsView.classList.add('hidden');
-                paperView.classList.remove('hidden');
-            }
-
-            // --- INITIALIZATION & EVENT LISTENERS ---
-            
-            // Set default date to today
-            paperDateEl.valueAsDate = new Date();
-            
-            // Pre-fill and parse CSV data
-            csvDataEl.value = csvData;
-            allQuestions = parseCSV(csvDataEl.value);
-            
-            // Populate UI elements
-            populateUnits();
-            updateTotalMarks();
-
-            // Event Listeners
-            generateBtn.addEventListener('click', generatePaper);
-            backBtn.addEventListener('click', () => {
-                controlsView.classList.remove('hidden');
-                paperView.classList.add('hidden');
-            });
-            printBtn.addEventListener('click', () => {
-                window.print();
-            });
-            selectAllUnitsEl.addEventListener('change', (e) => {
-                document.querySelectorAll('.unit-checkbox').forEach(cb => {
-                    cb.checked = e.target.checked;
-                });
-                updateTotalMarks();
             });
 
         });
