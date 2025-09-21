@@ -22,29 +22,28 @@ document.addEventListener('DOMContentLoaded', () => {
     let allQuestions = []; // This will now hold questions for the *currently selected* subject
 
     // --- FUNCTIONS ---
-
-    /**
-     * Parses CSV data into an array of objects.
-     * @param {string} csv - The CSV data as a string.
-     * @returns {Array<Object>}
-     */
-    function parseCSV(csv) {
-        const lines = csv.trim().split('\n');
-        const headers = lines[0].split(',').map(h => h.trim().replace(/"/g, ''));
-        const data = [];
-        for (let i = 1; i < lines.length; i++) {
-            const values = lines[i].match(/(".*?"|[^",]+)(?=\s*,|\s*$)/g) || [];
-            if (values.length === headers.length) {
-                const obj = {};
-                for (let j = 0; j < headers.length; j++) {
-                    obj[headers[j]] = values[j].replace(/"/g, '').trim();
-                }
-                data.push(obj);
-            }
-        }
-        console.log("Parsed CSV data:", data);
-        return data;
-    }
+/**
+     * Parses CSV data into an array of objects.
+     * @param {string} csv - The CSV data as a string.
+     * @returns {Array<Object>}
+     */
+    function parseCSV(csv) {
+        const lines = csv.trim().split('\n');
+        const headers = lines[0].match(/"[^"]+"|[^,]+/g).map(h => h.replace(/"/g, '').trim());
+        const data = [];
+        for (let i = 1; i < lines.length; i++) {
+            const values = lines[i].match(/"[^"]+"|[^,]+/g) || [];
+            if (values.length === headers.length) {
+                const obj = {};
+                for (let j = 0; j < headers.length; j++) {
+                    obj[headers[j]] = values[j].replace(/"/g, '').trim();
+                }
+                data.push(obj);
+            }
+        }
+        console.log("Parsed CSV data:", data);
+        return data;
+    }
 
     /**
      * Populates the unit selection checkboxes based on the current subject's questions.
